@@ -1,0 +1,9 @@
+$ python -m alembic downgrade base
+exit=0
+
+$ python -m alembic upgrade head
+exit=0
+
+$ python -m alembic check
+No new upgrade operations detected.
+exit=0
