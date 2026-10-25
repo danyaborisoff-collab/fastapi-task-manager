@@ -28,11 +28,20 @@ async def process_time(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception:
-        logger.exception("%s %s status=500 time=%.6fs", request.method, request.url.path,
-                         perf_counter() - started)
+        logger.exception(
+            "%s %s status=500 time=%.6fs",
+            request.method,
+            request.url.path,
+            perf_counter() - started,
+        )
         raise
     elapsed = perf_counter() - started
     response.headers["X-Process-Time"] = f"{elapsed:.6f}"
-    logger.info("%s %s status=%s time=%.6fs", request.method, request.url.path,
-                response.status_code, elapsed)
+    logger.info(
+        "%s %s status=%s time=%.6fs",
+        request.method,
+        request.url.path,
+        response.status_code,
+        elapsed,
+    )
     return response

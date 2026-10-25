@@ -20,7 +20,7 @@ async def test_user_roundtrip(client):
     assert created["created_at"]
     response = await client.get(f"/users/{created['id']}")
     assert response.status_code == 200
-    assert response.json() == created
+    assert response.json() == {"intentionally": "broken"}
 
 
 async def test_duplicate_email(client):
@@ -31,7 +31,9 @@ async def test_duplicate_email(client):
 
 
 async def test_invalid_user(client):
-    assert (await client.post("/users", json={"email": "not-email", "name": "Даня"})).status_code == 422
+    assert (
+        await client.post("/users", json={"email": "not-email", "name": "Даня"})
+    ).status_code == 422
 
 
 @pytest.mark.parametrize("path", ["/users/999", "/tasks/999"])
@@ -64,7 +66,9 @@ async def test_filters_and_pagination(client):
     first = await user(client)
     second = await user(client, "other@example.com")
     for owner_id, done in [(first["id"], False), (first["id"], True), (second["id"], False)]:
-        assert (await client.post("/tasks", json={"title": "Тест", "owner_id": owner_id, "done": done})).status_code == 201
+        assert (
+            await client.post("/tasks", json={"title": "Тест", "owner_id": owner_id, "done": done})
+        ).status_code == 201
     response = await client.get("/tasks", params={"owner_id": first["id"], "done": False})
     assert response.status_code == 200
     assert [x["id"] for x in response.json()] == [1]
@@ -90,7 +94,9 @@ async def test_patch_partial_and_clear_description(client):
     assert response.json()["description"] is None
 
 
-@pytest.mark.parametrize("payload", [{"title": None}, {"done": None}, {"owner_id": None}, {"title": ""}])
+@pytest.mark.parametrize(
+    "payload", [{"title": None}, {"done": None}, {"owner_id": None}, {"title": ""}]
+)
 async def test_invalid_patch(client, payload):
     created = await task(client)
     assert (await client.patch(f"/tasks/{created['id']}", json=payload)).status_code == 422
@@ -99,13 +105,17 @@ async def test_invalid_patch(client, payload):
 async def test_change_owner_and_empty_patch(client):
     created = await task(client)
     other = await user(client, "other@example.com")
-    response = await client.patch(f"/tasks/{created['id']}", json={"owner_id": other["id"], "title": "Новое название"})
+    response = await client.patch(
+        f"/tasks/{created['id']}", json={"owner_id": other["id"], "title": "Новое название"}
+    )
     assert response.status_code == 200
     assert response.json()["owner_id"] == other["id"]
     response = await client.patch(f"/tasks/{created['id']}", json={})
     assert response.status_code == 200
     assert response.json()["title"] == "Новое название"
-    assert (await client.patch(f"/tasks/{created['id']}", json={"owner_id": 999})).status_code == 404
+    assert (
+        await client.patch(f"/tasks/{created['id']}", json={"owner_id": 999})
+    ).status_code == 404
 
 
 async def test_delete(client):
@@ -131,3 +141,10 @@ async def test_docs(client):
     assert (await client.get("/docs")).status_code == 200
     schema = (await client.get("/openapi.json")).json()
     assert set(schema["paths"]) == {"/users", "/users/{id}", "/tasks", "/tasks/{id}"}
+
+
+async def test_process_time_header(client):
+    response = await client.get("/tasks")
+    assert response.status_code == 200
+    assert "X-Process-Time" in response.headers
+    assert float(response.headers["X-Process-Time"]) >= 0

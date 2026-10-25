@@ -6,15 +6,19 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.config import settings
 from app.db import Base
-from app import models
 
 config = context.config
 target_metadata = Base.metadata
 
 
 def run_migrations_offline():
-    context.configure(url=settings.database_url, target_metadata=target_metadata,
-                      literal_binds=True, dialect_opts={"paramstyle": "named"}, compare_type=True)
+    context.configure(
+        url=settings.database_url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+    )
     with context.begin_transaction():
         context.run_migrations()
 

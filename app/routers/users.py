@@ -9,8 +9,12 @@ from app.schemas import UserCreate, UserRead
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("", response_model=UserRead, status_code=status.HTTP_201_CREATED,
-             responses={409: {"description": "Email занят"}})
+@router.post(
+    "",
+    response_model=UserRead,
+    status_code=status.HTTP_201_CREATED,
+    responses={409: {"description": "Email занят"}},
+)
 async def create_user(payload: UserCreate, session: AsyncSession = Depends(get_session)):
     user = User(**payload.model_dump())
     session.add(user)
@@ -25,8 +29,9 @@ async def create_user(payload: UserCreate, session: AsyncSession = Depends(get_s
     return user
 
 
-@router.get("/{id}", response_model=UserRead,
-            responses={404: {"description": "Пользователь не найден"}})
+@router.get(
+    "/{id}", response_model=UserRead, responses={404: {"description": "Пользователь не найден"}}
+)
 async def get_user(id: int, session: AsyncSession = Depends(get_session)):
     user = await session.get(User, id)
     if user is None:
