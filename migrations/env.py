@@ -4,11 +4,11 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
+from app import models
 from app.config import settings
-from app.db import Base
 
 config = context.config
-target_metadata = Base.metadata
+target_metadata = models.User.metadata
 
 
 def run_migrations_offline():
