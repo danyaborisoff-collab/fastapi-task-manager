@@ -147,7 +147,7 @@ Runner — Ubuntu 24.04, Python в CI — 3.12. Прямые зависимос�
 |---|---|---|
 | Намеренно неверное ожидание | [Красный CI](https://github.com/danyaborisoff-collab/fastapi-task-manager/actions/runs/40243875440) | lint — success, test — failure (exit 1), build — skipped |
 | Исправление теста в PR | [Зелёный CI](https://github.com/danyaborisoff-collab/fastapi-task-manager/actions/runs/40244020419) | lint и test — success, build — skipped (PR) |
-| Merge в main и публикация | [CI main](https://github.com/danyaborisoff-collab/fastapi-task-manager/actions/runs/40244189280) | lint, test, build — success; GHCR опубликован, Docker Hub пропущен из-за недоступных секретов |
+| Merge в main и публикация | [CI main](https://github.com/danyaborisoff-collab/fastapi-task-manager/actions/runs/40244713548) | lint, test, build — success; образ опубликован в обоих реестрах |
 
 Скриншот проваленного запуска:
 
@@ -170,21 +170,25 @@ Runner — Ubuntu 24.04, Python в CI — 3.12. Прямые зависимос�
 
 ### GitHub Container Registry
 
-Образ опубликован. Анонимное чтение manifest подтверждено: HTTP 200. Digest: `sha256:eb5ee02e8c31a97d24e6741e683116bce63d3e71c37fd13493c7a94d514b5426`.
+Образ опубликован и доступен анонимно: запрос manifest вернул HTTP 200. Digest: `sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397`.
 
 - [Страница пакета GHCR](https://github.com/danyaborisoff-collab/fastapi-task-manager/pkgs/container/fastapi-task-manager)
 - Имя: `ghcr.io/danyaborisoff-collab/fastapi-task-manager:latest`
-- Тег конкретной сборки: `ghcr.io/danyaborisoff-collab/fastapi-task-manager:sha-b265d3b418b0305b84dc5acc9d9cf2cae2054757`
+- Тег конкретной сборки: `ghcr.io/danyaborisoff-collab/fastapi-task-manager:sha-b593ed8f072fd66c419e60129eb7bf13935686ac`
 
 ### Docker Hub
 
-Публикация пока не подтверждена: в первом main-запуске секреты Docker Hub были недоступны, шаг авторизации пропущен. Ссылка ниже — целевой адрес, не подтверждение наличия образа.
+Образ опубликован. API Docker Hub подтвердил тег `latest`; digest `sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397` совпадает с GHCR.
 
 - [Страница образа Docker Hub](https://hub.docker.com/r/ttdany/fastapi-task-manager)
 - Имя: `ttdany/fastapi-task-manager:latest`
-- Тег конкретной сборки: `ttdany/fastapi-task-manager:sha-b265d3b418b0305b84dc5acc9d9cf2cae2054757`
+- Тег конкретной сборки: `ttdany/fastapi-task-manager:sha-b593ed8f072fd66c419e60129eb7bf13935686ac`
 
-Docker Hub требует репозиторных секретов `DOCKERHUB_USERNAME` и `DOCKERHUB_TOKEN`. В первом запуске отсутствие секретов приводило к пропуску Docker Hub. В актуальном workflow добавлена обязательная предварительная проверка: если хотя бы один секрет пуст, build завершается с ошибкой и не выдаёт неполную публикацию за успешную. GHCR использует встроенный `GITHUB_TOKEN` с `packages: write` только в build.
+Docker Hub требует репозиторных секретов `DOCKERHUB_USERNAME` и `DOCKERHUB_TOKEN`. Проверка наличия обоих секретов обязательна: при пустом секрете build завершается с ошибкой. В первом запуске публикация Docker Hub была пропущена из-за недоступных секретов; после их настройки повторный запуск успешно опубликовал оба образа. GHCR использует встроенный `GITHUB_TOKEN` с `packages: write` только в build.
+
+### Подтверждение публикации
+
+[Данные проверки реестров](docs/evidence/lab7-registries.json). Оба тега `sha-b593ed8f072fd66c419e60129eb7bf13935686ac` указывают на один и тот же OCI image index. Метка `org.opencontainers.image.revision` связывает образ с коммитом исходного кода.
 
 ## Контрольные вопросы
 
@@ -218,4 +222,4 @@ Build будет пропущен, образ не опубликуется. З�
 
 ## Вывод
 
-Реализованы 25 тестов на PostgreSQL, изолированные фикстуры с dependency_overrides, многоэтапная контейнеризация и CI. Выполнен цикл красного и зелёного PR с последующим merge; контейнерные тесты, миграции и непривилегированный запуск проверены на GitHub runner. Публикация в GHCR подтверждена. Для завершения публикации в Docker Hub требуется исправить доступность репозиторных секретов.
+Реализованы 25 тестовых случаев на реальном PostgreSQL, изоляция тестовой БД через dependency_overrides, многоэтапный Dockerfile и запуск без root. GitHub Actions выполняет Ruff, тесты напрямую и через Docker Compose, проверяет миграции и запуск приложения. В PR продемонстрированы намеренное падение теста и успешное исправление, затем выполнен merge. После успешных проверок образ опубликован в GHCR и Docker Hub; совпадение digest подтверждено через API реестров.

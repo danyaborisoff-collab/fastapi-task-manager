@@ -1,0 +1,19 @@
+{
+  "commit": "b593ed8f072fd66c419e60129eb7bf13935686ac",
+  "ghcr": {
+    "image": "ghcr.io/danyaborisoff-collab/fastapi-task-manager",
+    "tag": "sha-b593ed8f072fd66c419e60129eb7bf13935686ac",
+    "digest": "sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397",
+    "anonymous_manifest_status": 200
+  },
+  "docker_hub": {
+    "image": "ttdany/fastapi-task-manager",
+    "tag": "latest",
+    "digest": "sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397",
+    "public_tag_api_status": 200
+  },
+  "image_user": "10001:10001",
+  "source_label": "https://github.com/danyaborisoff-collab/fastapi-task-manager",
+  "revision_label": "b593ed8f072fd66c419e60129eb7bf13935686ac",
+  "ci_run": "https://github.com/danyaborisoff-collab/fastapi-task-manager/actions/runs/40244713548"
+}
