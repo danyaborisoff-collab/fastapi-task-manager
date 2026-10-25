@@ -98,6 +98,19 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - name: Check Docker Hub credentials
+        shell: bash
+        run: |
+          missing=0
+          if [[ -z "$DOCKERHUB_USERNAME" ]]; then
+            echo '::error::Repository secret DOCKERHUB_USERNAME is missing or empty.'
+            missing=1
+          fi
+          if [[ -z "$DOCKERHUB_TOKEN" ]]; then
+            echo '::error::Repository secret DOCKERHUB_TOKEN is missing or empty.'
+            missing=1
+          fi
+          exit "$missing"
       - name: Log in to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         with:
@@ -105,7 +118,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Log in to Docker Hub
-        if: env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != ''
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -119,10 +131,8 @@ jobs:
             echo 'tags<<EOF'
             echo "$image:latest"
             echo "$image:sha-$GITHUB_SHA"
-            if [[ -n "$DOCKERHUB_USERNAME" && -n "$DOCKERHUB_TOKEN" ]]; then
-              echo "$DOCKERHUB_USERNAME/fastapi-task-manager:latest"
-              echo "$DOCKERHUB_USERNAME/fastapi-task-manager:sha-$GITHUB_SHA"
-            fi
+            echo "$DOCKERHUB_USERNAME/fastapi-task-manager:latest"
+            echo "$DOCKERHUB_USERNAME/fastapi-task-manager:sha-$GITHUB_SHA"
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
       - name: Build and publish image
@@ -136,6 +146,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: mode=min
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
       - name: Publication summary
         shell: bash
         env:
@@ -143,9 +156,4 @@ jobs:
         run: |
           echo "Published GHCR image: ghcr.io/${GITHUB_REPOSITORY,,}:sha-$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
           echo "Digest: $IMAGE_DIGEST" >> "$GITHUB_STEP_SUMMARY"
-          if [[ -n "$DOCKERHUB_USERNAME" && -n "$DOCKERHUB_TOKEN" ]]; then
-            echo "Published Docker Hub image: $DOCKERHUB_USERNAME/fastapi-task-manager:sha-$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo '::notice::Docker Hub publication is pending: configure DOCKERHUB_USERNAME and DOCKERHUB_TOKEN repository secrets.'
-            echo 'Docker Hub: NOT PUBLISHED (repository secrets are not configured).' >> "$GITHUB_STEP_SUMMARY"
-          fi
+          echo "Published Docker Hub image: $DOCKERHUB_USERNAME/fastapi-task-manager:sha-$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"

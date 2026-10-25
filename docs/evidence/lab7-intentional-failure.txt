@@ -1,0 +1,37 @@
+F........................                                                [100%]
+=================================== FAILURES ===================================
+_____________________________ test_user_roundtrip ______________________________
+
+client = <httpx.AsyncClient object at 0x7f175fdf3620>
+
+    async def test_user_roundtrip(client):
+        created = await user(client)
+        assert created["created_at"]
+        response = await client.get(f"/users/{created['id']}")
+        assert response.status_code == 200
+>       assert response.json() == {"intentionally": "broken"}
+E       AssertionError: assert {'created_at'...name': 'Даня'} == {'intentionally': 'broken'}
+E         
+E         Left contains 4 more items:
+E         {'created_at': '2026-10-25T23:12:57.706451Z',
+E          'email': 'student@example.com',
+E          'id': 1,
+E          'name': 'Даня'}
+E         Right contains 1 more item:
+E         {'intentionally': 'broken'}
+E         Use -v to get more diff
+
+tests/test_api.py:23: AssertionError
+----------------------------- Captured stderr call -----------------------------
+2026-10-25 23:12:57,718 INFO POST /users status=201 time=0.025624s
+2026-10-25 23:12:57,719 INFO HTTP Request: POST http://test/users "HTTP/1.1 201 Created"
+2026-10-25 23:12:57,728 INFO GET /users/1 status=200 time=0.007780s
+2026-10-25 23:12:57,728 INFO HTTP Request: GET http://test/users/1 "HTTP/1.1 200 OK"
+------------------------------ Captured log call -------------------------------
+INFO     tasks-api:main.py:40 POST /users status=201 time=0.025624s
+INFO     httpx:_client.py:1740 HTTP Request: POST http://test/users "HTTP/1.1 201 Created"
+INFO     tasks-api:main.py:40 GET /users/1 status=200 time=0.007780s
+INFO     httpx:_client.py:1740 HTTP Request: GET http://test/users/1 "HTTP/1.1 200 OK"
+=========================== short test summary info ============================
+FAILED tests/test_api.py::test_user_roundtrip - AssertionError: assert {'crea...
+1 failed, 24 passed in 0.95s
