@@ -33,10 +33,13 @@ async def create_task(payload: TaskCreate, session: AsyncSession = Depends(get_s
 
 
 @router.get("", response_model=list[TaskRead])
-async def list_tasks(done: bool | None = None, owner_id: int | None = Query(default=None, gt=0),
-                     limit: int = Query(default=20, ge=1, le=100),
-                     offset: int = Query(default=0, ge=0),
-                     session: AsyncSession = Depends(get_session)):
+async def list_tasks(
+    done: bool | None = None,
+    owner_id: int | None = Query(default=None, gt=0),
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    session: AsyncSession = Depends(get_session),
+):
     query = select(Task).order_by(Task.id)
     if done is not None:
         query = query.where(Task.done == done)

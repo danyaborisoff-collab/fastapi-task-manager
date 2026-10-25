@@ -1,0 +1,12 @@
+**/__pycache__
+**/*.pyc
+.venv
+.git
+.github
+.pytest_cache
+.ruff_cache
+.env
+.env.*
+docs
+*.zip
+*.log
