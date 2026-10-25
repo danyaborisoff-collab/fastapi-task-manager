@@ -20,7 +20,7 @@ async def test_user_roundtrip(client):
     assert created["created_at"]
     response = await client.get(f"/users/{created['id']}")
     assert response.status_code == 200
-    assert response.json() == created
+    assert response.json() == {"intentionally": "broken"}
 
 
 async def test_duplicate_email(client):

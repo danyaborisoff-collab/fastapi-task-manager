@@ -22,6 +22,6 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 COPY --chown=app:app tests ./tests
 COPY --chown=app:app pytest.ini pyproject.toml ./
 USER 10001:10001
-CMD ["pytest", "-q"]
+CMD ["python", "-m", "pytest", "-q"]
 
 FROM runtime-base AS runtime

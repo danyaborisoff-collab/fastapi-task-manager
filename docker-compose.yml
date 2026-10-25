@@ -73,7 +73,7 @@ services:
     depends_on:
       test-db:
         condition: service_healthy
-    command: ["sh", "-c", "alembic upgrade head && pytest -q"]
+    command: ["sh", "-c", "alembic upgrade head && python -m pytest -q"]
 
 volumes:
   pgdata:

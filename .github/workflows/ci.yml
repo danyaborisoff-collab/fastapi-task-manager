@@ -63,7 +63,7 @@ jobs:
       - name: Apply test database migrations
         run: alembic upgrade head && alembic check
       - name: Test with real PostgreSQL
-        run: pytest -q --junitxml=test-results.xml
+        run: python -m pytest -q --junitxml=test-results.xml
       - name: Test through Docker Compose
         run: docker compose --profile test run --build --rm tests
       - name: Start app and migrations through Docker Compose
