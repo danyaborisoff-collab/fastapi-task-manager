@@ -1,0 +1,9 @@
+{
+  "image": "danyaborisoff-collab/fastapi-task-manager",
+  "tag": "latest",
+  "user": "10001:10001",
+  "architecture": "amd64",
+  "os": "linux",
+  "anonymous_pull": true,
+  "secrets_in_image_env": false
+}
