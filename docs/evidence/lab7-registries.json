@@ -8,7 +8,7 @@
   },
   "docker_hub": {
     "image": "ttdany/fastapi-task-manager",
-    "tag": "latest",
+    "tag": "sha-b593ed8f072fd66c419e60129eb7bf13935686ac",
     "digest": "sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397",
     "public_tag_api_status": 200
   },

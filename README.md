@@ -170,7 +170,7 @@ Runner — Ubuntu 24.04, Python в CI — 3.12. Прямые зависимос�
 
 ### GitHub Container Registry
 
-Образ опубликован и доступен анонимно: запрос manifest вернул HTTP 200. Digest: `sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397`.
+Образ опубликован и доступен анонимно. Для фиксированного тега `sha-b593ed8f072fd66c419e60129eb7bf13935686ac` запрос manifest вернул HTTP 200. Digest: `sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397`.
 
 - [Страница пакета GHCR](https://github.com/danyaborisoff-collab/fastapi-task-manager/pkgs/container/fastapi-task-manager)
 - Имя: `ghcr.io/danyaborisoff-collab/fastapi-task-manager:latest`
@@ -178,7 +178,7 @@ Runner — Ubuntu 24.04, Python в CI — 3.12. Прямые зависимос�
 
 ### Docker Hub
 
-Образ опубликован. API Docker Hub подтвердил тег `latest`; digest `sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397` совпадает с GHCR.
+Образ опубликован. API Docker Hub подтвердил фиксированный тег `sha-b593ed8f072fd66c419e60129eb7bf13935686ac`; digest `sha256:03cc391605ae0c2e43bc6050e88616e3f70e3b7cb6d020eed6020e32bc2e5397` совпадает с GHCR.
 
 - [Страница образа Docker Hub](https://hub.docker.com/r/ttdany/fastapi-task-manager)
 - Имя: `ttdany/fastapi-task-manager:latest`
@@ -188,7 +188,7 @@ Docker Hub требует репозиторных секретов `DOCKERHUB_U
 
 ### Подтверждение публикации
 
-[Данные проверки реестров](docs/evidence/lab7-registries.json). Оба тега `sha-b593ed8f072fd66c419e60129eb7bf13935686ac` указывают на один и тот же OCI image index. Метка `org.opencontainers.image.revision` связывает образ с коммитом исходного кода.
+[Данные проверки реестров](docs/evidence/lab7-registries.json). Оба тега `sha-b593ed8f072fd66c419e60129eb7bf13935686ac` указывают на один и тот же OCI image index. `latest` — подвижный тег и обновляется при следующих успешных сборках; для воспроизводимости используется зафиксированный SHA-тег. Метка `org.opencontainers.image.revision` связывает образ с коммитом исходного кода.
 
 ## Контрольные вопросы
 
